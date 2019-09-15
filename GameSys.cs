@@ -34,32 +34,14 @@ public class GameSys : MonoBehaviour
         }
     };
 
-    //EraseClick EC;
-
     //各ブロック
     [SerializeField]
-    public GameObject BluB;  //青ブロック
-    [SerializeField]
-    public GameObject GreB;  //緑ブロック
-    [SerializeField]
-    public GameObject RedB;  //赤ブロック
-    [SerializeField]
-    public GameObject BlaB;  //灰ブロック
-    [SerializeField]
-    public GameObject YelB;  //黄ブロック
+    public GameObject BluB, GreB, RedB, BlaB, YelB;  //青・緑・赤・灰・黄ブロック
 
     //各大ブロック
     [SerializeField]
-    public GameObject BIGBluB;  //青ブロック
-    [SerializeField]
-    public GameObject BIGGreB;  //緑ブロック
-    [SerializeField]
-    public GameObject BIGRedB;  //赤ブロック
-    [SerializeField]
-    public GameObject BIGBlaB;  //灰ブロック
-    [SerializeField]
-    public GameObject BIGYelB;  //黄ブロック
-
+    public GameObject BIGBluB, BIGGreB, BIGRedB, BIGBlaB, BIGYelB;  //青・緑・赤・灰・黄ブロック
+    
     //データ上での色
     int BlockC = 0;
     //消した座標のX軸格納
@@ -68,6 +50,9 @@ public class GameSys : MonoBehaviour
 
     [SerializeField]
     public GameObject Panel;
+
+    //生成用格納：仮オブジェクト
+    public GameObject Color_Block;
 
     public Vector2 EraseSPos;
     public Vector2 EraseBPos;
@@ -115,17 +100,12 @@ public class GameSys : MonoBehaviour
 
     public bool AddCP = false;
 
-    void Awake()
-    {
-        //EC = GameObject.Find("GameSys").GetComponent<EraseClick>();
-    }
-
     // Start is called before the first frame update
     void Start()
     {
         //8*8のブロック配置
+        //小ブロック生成後に、大ブロックを統合生成して、動き始める許可を出す
         Gene();
-        Debug.Log(ColorList[1, 0]);
         BIGGene();
         MoveC = true;
     }
@@ -133,32 +113,6 @@ public class GameSys : MonoBehaviour
 
     void FixedUpdate()
     {
-        /*
-        if (MoveC == true)
-        {
-            tmpTime += Time.deltaTime;
-
-            if (tmpTime >= intarval)
-            {
-                
-				if (EraseSPos.y <= 175 || EraseBPos.y <= 150)
-				{
-					Move();
-				}
-
-				if (EraseSPos.y > 175 || EraseBPos.y > 150)
-				{
-					//Move2();
-				}
-                
-
-                Move();
-                AddBlock();
-                tmpTime = 0;
-            }
-        }
-        */
-
         if (MoveC == true)
         {
             Move();
@@ -171,6 +125,7 @@ public class GameSys : MonoBehaviour
 
             }
 
+            //ブロックの動きが止まってる場合（EraseXは必要か？
             if (EraseX == -1 || CheckP == false && CheckP2 == false && CheckP3 == false && CheckP4 == false && CheckP5 == false &&
                 CheckP6 == false && CheckP7 == false && CheckP8 == false && CheckP9 == false && CheckP10 == false)
             {
@@ -209,60 +164,37 @@ public class GameSys : MonoBehaviour
                 switch (Set)
                 {
                     case 1:
-                        SmallList.Add(new SBlock(Instantiate(BluB), new Vector2(X, Y), 1));
-                        SmallList[SmallList.Count - 1].SmallB.transform.position = new Vector2(SmallList[SmallList.Count - 1].SPos.x, SmallList[SmallList.Count - 1].SPos.y);
-                        SmallList[SmallList.Count - 1].SmallB.transform.SetParent(Panel.transform, false);
-
-                        SmallList[SmallList.Count - 1].SID = SmallList[SmallList.Count - 1].SmallB.GetInstanceID();
-
-                        SPosX[P, Q] = SmallList[SmallList.Count - 1].SPos.x;
-                        SPosY[P, Q] = SmallList[SmallList.Count - 1].SPos.y;
-
-                        X = X + 50;
-                        BlockC = 1;
-                        ColorList[P, Q] = BlockC;
-
-                        //データ上での位置移動
-                        P = P + 1;
+                        //青ブロックを初期生成
+                        Color_Block = BluB;
                         break;
 
                     case 2:
-                        SmallList.Add(new SBlock(Instantiate(GreB), new Vector2(X, Y), 2));
-                        SmallList[SmallList.Count - 1].SmallB.transform.position = new Vector2(SmallList[SmallList.Count - 1].SPos.x, SmallList[SmallList.Count - 1].SPos.y);
-                        SmallList[SmallList.Count - 1].SmallB.transform.SetParent(Panel.transform, false);
-
-                        SmallList[SmallList.Count - 1].SID = SmallList[SmallList.Count - 1].SmallB.GetInstanceID();
-
-                        SPosX[P, Q] = SmallList[SmallList.Count - 1].SPos.x;
-                        SPosY[P, Q] = SmallList[SmallList.Count - 1].SPos.y;
-
-                        X = X + 50;
-                        BlockC = 2;
-                        ColorList[P, Q] = BlockC;
-
-                        //データ上での位置移動
-                        P = P + 1;
+                        //緑ブロックを初期生成
+                        Color_Block = GreB;
                         break;
 
 
                     case 3:
-                        SmallList.Add(new SBlock(Instantiate(RedB), new Vector2(X, Y), 3));
-                        SmallList[SmallList.Count - 1].SmallB.transform.position = new Vector2(SmallList[SmallList.Count - 1].SPos.x, SmallList[SmallList.Count - 1].SPos.y);
-                        SmallList[SmallList.Count - 1].SmallB.transform.SetParent(Panel.transform, false);
-
-                        SmallList[SmallList.Count - 1].SID = SmallList[SmallList.Count - 1].SmallB.GetInstanceID();
-
-                        SPosX[P, Q] = SmallList[SmallList.Count - 1].SPos.x;
-                        SPosY[P, Q] = SmallList[SmallList.Count - 1].SPos.y;
-
-                        X = X + 50;
-                        BlockC = 3;
-                        ColorList[P, Q] = BlockC;
-
-                        //データ上での位置移動
-                        P = P + 1;
+                        //赤ブロックを初期生成
+                        Color_Block = RedB;
                         break;
                 }
+
+                SmallList.Add(new SBlock(Instantiate(Color_Block), new Vector2(X, Y), Set));
+                SmallList[SmallList.Count - 1].SmallB.transform.position = new Vector2(SmallList[SmallList.Count - 1].SPos.x, SmallList[SmallList.Count - 1].SPos.y);
+                SmallList[SmallList.Count - 1].SmallB.transform.SetParent(Panel.transform, false);
+
+                SmallList[SmallList.Count - 1].SID = SmallList[SmallList.Count - 1].SmallB.GetInstanceID();
+
+                SPosX[P, Q] = SmallList[SmallList.Count - 1].SPos.x;
+                SPosY[P, Q] = SmallList[SmallList.Count - 1].SPos.y;
+
+                X = X + 50;
+                BlockC = Set;
+                ColorList[P, Q] = BlockC;
+
+                //データ上での位置移動
+                P = P + 1;
             }
 
             Y = Y - 50;
@@ -340,60 +272,39 @@ public class GameSys : MonoBehaviour
                             }
                         }
 
-                        //何色か
-                        if (ColorList[x, y] == 1)
+                        switch(ColorList[x, y])
                         {
-                            //大ブロックを生成
-                            BigList.Add(new BBlock(Instantiate(BIGBluB), new Vector2(I, J), 4));
-                            BigList[BigList.Count - 1].BigB.transform.position = new Vector2(BigList[BigList.Count - 1].BPos.x, BigList[BigList.Count - 1].BPos.y);
-                            BigList[BigList.Count - 1].BigB.transform.SetParent(Panel.transform, false);
+                            case 1:
+                                //大ブロック：青を生成
+                                Color_Block = BIGBluB;
+                                BlockC = 4;
+                                break;
 
-                            BigList[BigList.Count - 1].BID = BigList[BigList.Count - 1].BigB.GetInstanceID();
+                            case 2:
+                                //大ブロック：緑を生成
+                                Color_Block = BIGGreB;
+                                BlockC = 5;
+                                break;
 
-                            BlockC = 4;
-                            ColorList[x, y] = BlockC;
-                            ColorList[x + 1, y] = BlockC;
-                            ColorList[x, y + 1] = BlockC;
-                            ColorList[x + 1, y + 1] = BlockC;
-                            Debug.Log("[x, y]: " + ColorList[x, y] + " / [x + 1, y]: " + ColorList[x + 1, y] +
-                                      " / [x, y + 1]: " + ColorList[x, y + 1] + " / [x + 1, y + 1]: " + ColorList[x + 1, y + 1]);
+                            case 3:
+                                //大ブロック：赤を生成
+                                Color_Block = BIGRedB;
+                                BlockC = 6;
+                                break;
                         }
 
-                        if (ColorList[x, y] == 2)
-                        {
-                            //大ブロックを生成
-                            BigList.Add(new BBlock(Instantiate(BIGGreB), new Vector2(I, J), 5));
-                            BigList[BigList.Count - 1].BigB.transform.position = new Vector2(BigList[BigList.Count - 1].BPos.x, BigList[BigList.Count - 1].BPos.y);
-                            BigList[BigList.Count - 1].BigB.transform.SetParent(Panel.transform, false);
+                        BigList.Add(new BBlock(Instantiate(Color_Block), new Vector2(I, J), BlockC));
+                        BigList[BigList.Count - 1].BigB.transform.position = new Vector2(BigList[BigList.Count - 1].BPos.x, BigList[BigList.Count - 1].BPos.y);
+                        BigList[BigList.Count - 1].BigB.transform.SetParent(Panel.transform, false);
 
-                            BigList[BigList.Count - 1].BID = BigList[BigList.Count - 1].BigB.GetInstanceID();
+                        BigList[BigList.Count - 1].BID = BigList[BigList.Count - 1].BigB.GetInstanceID();
 
-                            BlockC = 5;
-                            ColorList[x, y] = BlockC;
-                            ColorList[x + 1, y] = BlockC;
-                            ColorList[x, y + 1] = BlockC;
-                            ColorList[x + 1, y + 1] = BlockC;
-                            Debug.Log("[x, y]: " + ColorList[x, y] + " / [x + 1, y]: " + ColorList[x + 1, y] +
-                                      " / [x, y + 1]: " + ColorList[x, y + 1] + " / [x + 1, y + 1]: " + ColorList[x + 1, y + 1]);
-                        }
-
-                        if (ColorList[x, y] == 3)
-                        {
-                            //大ブロックを生成
-                            BigList.Add(new BBlock(Instantiate(BIGRedB), new Vector2(I, J), 6));
-                            BigList[BigList.Count - 1].BigB.transform.position = new Vector2(BigList[BigList.Count - 1].BPos.x, BigList[BigList.Count - 1].BPos.y);
-                            BigList[BigList.Count - 1].BigB.transform.SetParent(Panel.transform, false);
-
-                            BigList[BigList.Count - 1].BID = BigList[BigList.Count - 1].BigB.GetInstanceID();
-
-                            BlockC = 6;
-                            ColorList[x, y] = BlockC;
-                            ColorList[x + 1, y] = BlockC;
-                            ColorList[x, y + 1] = BlockC;
-                            ColorList[x + 1, y + 1] = BlockC;
-                            Debug.Log("[x, y]: " + ColorList[x, y] + " / [x + 1, y]: " + ColorList[x + 1, y] +
-                                      " / [x, y + 1]: " + ColorList[x, y + 1] + " / [x + 1, y + 1]: " + ColorList[x + 1, y + 1]);
-                        }
+                        ColorList[x, y] = BlockC;
+                        ColorList[x + 1, y] = BlockC;
+                        ColorList[x, y + 1] = BlockC;
+                        ColorList[x + 1, y + 1] = BlockC;
+                        Debug.Log("[x, y]: " + ColorList[x, y] + " / [x + 1, y]: " + ColorList[x + 1, y] +
+                                  " / [x, y + 1]: " + ColorList[x, y + 1] + " / [x + 1, y + 1]: " + ColorList[x + 1, y + 1]);
 
                         I = I + 50;
                     }
@@ -439,72 +350,45 @@ public class GameSys : MonoBehaviour
                         {
                             if (ColorList[x, Y] == 0)
                             {
-                                //Debug.Log("TEST: D");
                                 Debug.Log("Debug 4: " + SPosX[x, Y] + " / " + SPosY[x, Y] + " / x: " + x + " / P: " + P + " / Q: " + Q);
 
                                 int Set = Random.Range(1, 5);
                                 switch (Set)
                                 {
                                     case 1:
-                                        SmallList.Add(new SBlock(Instantiate(BluB), new Vector2(P, Q), 1));
-                                        SmallList[SmallList.Count - 1].SmallB.transform.position = new Vector2(SmallList[SmallList.Count - 1].SPos.x, SmallList[SmallList.Count - 1].SPos.y);
-                                        SmallList[SmallList.Count - 1].SmallB.transform.SetParent(Panel.transform, false);
-
-                                        SmallList[SmallList.Count - 1].SID = SmallList[SmallList.Count - 1].SmallB.GetInstanceID();
-
-                                        SPosX[x, Y] = SmallList[SmallList.Count - 1].SPos.x;
-                                        SPosY[x, Y] = SmallList[SmallList.Count - 1].SPos.y;
-
-                                        BlockC = 1;
-                                        ColorList[x, Y] = BlockC;
-                                        Q += 50;
+                                        //青ブロック追加生成
+                                        Color_Block = BluB;
                                         break;
 
                                     case 2:
-                                        SmallList.Add(new SBlock(Instantiate(GreB), new Vector2(P, Q), 2));
-                                        SmallList[SmallList.Count - 1].SmallB.transform.position = new Vector2(SmallList[SmallList.Count - 1].SPos.x, SmallList[SmallList.Count - 1].SPos.y);
-                                        SmallList[SmallList.Count - 1].SmallB.transform.SetParent(Panel.transform, false);
-
-                                        SmallList[SmallList.Count - 1].SID = SmallList[SmallList.Count - 1].SmallB.GetInstanceID();
-
-                                        SPosX[x, Y] = SmallList[SmallList.Count - 1].SPos.x;
-                                        SPosY[x, Y] = SmallList[SmallList.Count - 1].SPos.y;
-
-                                        BlockC = 2;
-                                        ColorList[x, Y] = BlockC;
-                                        Q += 50;
+                                        //緑ブロック追加生成
+                                        Color_Block = GreB;
                                         break;
 
                                     case 3:
-                                        SmallList.Add(new SBlock(Instantiate(RedB), new Vector2(P, Q), 3));
-                                        SmallList[SmallList.Count - 1].SmallB.transform.position = new Vector2(SmallList[SmallList.Count - 1].SPos.x, SmallList[SmallList.Count - 1].SPos.y);
-                                        SmallList[SmallList.Count - 1].SmallB.transform.SetParent(Panel.transform, false);
-
-                                        SmallList[SmallList.Count - 1].SID = SmallList[SmallList.Count - 1].SmallB.GetInstanceID();
-
-                                        SPosX[x, Y] = SmallList[SmallList.Count - 1].SPos.x;
-                                        SPosY[x, Y] = SmallList[SmallList.Count - 1].SPos.y;
-
-                                        BlockC = 3;
-                                        ColorList[x, Y] = BlockC;
-                                        Q += 50;
+                                        //赤ブロック追加生成
+                                        Color_Block = RedB;
                                         break;
 
                                     case 4:
-                                        SmallList.Add(new SBlock(Instantiate(YelB), new Vector2(P, Q), 7));
-                                        SmallList[SmallList.Count - 1].SmallB.transform.position = new Vector2(SmallList[SmallList.Count - 1].SPos.x, SmallList[SmallList.Count - 1].SPos.y);
-                                        SmallList[SmallList.Count - 1].SmallB.transform.SetParent(Panel.transform, false);
-
-                                        SmallList[SmallList.Count - 1].SID = SmallList[SmallList.Count - 1].SmallB.GetInstanceID();
-
-                                        SPosX[x, Y] = SmallList[SmallList.Count - 1].SPos.x;
-                                        SPosY[x, Y] = SmallList[SmallList.Count - 1].SPos.y;
-
-                                        BlockC = 7;
-                                        ColorList[x, Y] = BlockC;
-                                        Q += 50;
+                                        //黄ブロック追加生成
+                                        Color_Block = YelB;
                                         break;
                                 }
+
+                                SmallList.Add(new SBlock(Instantiate(Color_Block), new Vector2(P, Q), Set));
+                                SmallList[SmallList.Count - 1].SmallB.transform.position = new Vector2(SmallList[SmallList.Count - 1].SPos.x, SmallList[SmallList.Count - 1].SPos.y);
+                                SmallList[SmallList.Count - 1].SmallB.transform.SetParent(Panel.transform, false);
+
+                                SmallList[SmallList.Count - 1].SID = SmallList[SmallList.Count - 1].SmallB.GetInstanceID();
+
+                                SPosX[x, Y] = SmallList[SmallList.Count - 1].SPos.x;
+                                SPosY[x, Y] = SmallList[SmallList.Count - 1].SPos.y;
+
+                                BlockC = Set;
+                                ColorList[x, Y] = BlockC;
+                                Q += 50;
+
                             }
 
                             else
@@ -561,29 +445,23 @@ public class GameSys : MonoBehaviour
 
                     /*
                     //大ブロックを消した場合の処理
-                    if (EraseX != -1)
+                    if (EraseX != -1 && EraseY != -1)
                     {
-                        if (EraseY != -1)
+                        //空白の上のブロックが小ブロックの場合
+                        if (ColorList[EraseX, EraseY - 3] == 1 || ColorList[EraseX, EraseY - 3] == 2 || ColorList[EraseX, EraseY - 3] == 3 ||
+                            ColorList[EraseX, EraseY - 3] == 7)
                         {
-                            //空白の上のブロックが小ブロックの場合
-                            if (ColorList[EraseX, EraseY - 3] == 1 || ColorList[EraseX, EraseY - 3] == 2 || ColorList[EraseX, EraseY - 3] == 3 ||
-                                ColorList[EraseX, EraseY - 3] == 7)
-                            {
 
-                            }
                         }
                     }
 
-                    else
+                    else if (EraseY != -1)
                     {
-                        if (EraseY != -1)
+                        //空白の上のブロックが小ブロックの場合
+                        if (ColorList[x, EraseY - 3] == 1 || ColorList[x, EraseY - 3] == 2 || ColorList[x, EraseY - 3] == 3 ||
+                            ColorList[x, EraseY - 3] == 7)
                         {
-                            //空白の上のブロックが小ブロックの場合
-                            if (ColorList[x, EraseY - 3] == 1 || ColorList[x, EraseY - 3] == 2 || ColorList[x, EraseY - 3] == 3 ||
-                                ColorList[x, EraseY - 3] == 7)
-                            {
 
-                            }
                         }
                     }
                     */
@@ -614,180 +492,182 @@ public class GameSys : MonoBehaviour
                     if (ColorList[x, y - 1] == 1 || ColorList[x, y - 1] == 2 || ColorList[x, y - 1] == 3 ||
                         ColorList[x, y - 1] == 7)
                     {
-                        if (EraseX != -1)
+                        //大ブロックを消した場合（書く場所を修正？
+                        if (EraseX != -1 && EraseY != -1)
                         {
-                            if (EraseY != -1)
+                            Debug.Log("EraseBIG & SMALL!!");
+
+                            //大ブロックを消した直後に走る処理
+                            if (ColorList[EraseX, EraseY + 1] == 0)
                             {
-                                Debug.Log("EraseBIG & SMALL!!");
-
-                                if (ColorList[EraseX, EraseY + 1] == 0)
+                                for (int Q = 0; Q < SmallList.Count; Q++)
                                 {
-                                    for (int Q = 0; Q < SmallList.Count; Q++)
+                                    if (SmallList[Q].SPos.x == SPosX[EraseX, EraseY - 1] && SmallList[Q].SPos.y == SPosY[EraseX, EraseY - 1])
                                     {
-                                        if (SmallList[Q].SPos.x == SPosX[EraseX, EraseY - 1] && SmallList[Q].SPos.y == SPosY[EraseX, EraseY - 1])
+                                        ColorList[EraseX, EraseY + 1] = ColorList[EraseX, EraseY - 1];
+                                        ColorList[EraseX, EraseY - 1] = 0;
+
+                                        MoveP.y = Mathf.SmoothStep(SPosY[EraseX, EraseY - 1], SPosY[EraseX, EraseY + 1], tmpTime);
+                                        Debug.Log("MoveP.y" + MoveP.y);
+
+                                        SmallList[Q].SPos = new Vector2(SPosX[EraseX, EraseY + 1], MoveP.y);
+                                        Debug.Log("SPos: " + SmallList[Q].SPos);
+                                        SmallList[Q].SmallB.transform.localPosition = SmallList[Q].SPos;
+                                        SmallList[Q].SmallB.transform.SetParent(Panel.transform, false);
+
+                                        //動き始めた場合
+                                        if (MoveP.y != 0)
                                         {
-                                            ColorList[EraseX, EraseY + 1] = ColorList[EraseX, EraseY - 1];
-                                            ColorList[EraseX, EraseY - 1] = 0;
-
-                                            MoveP.y = Mathf.SmoothStep(SPosY[EraseX, EraseY - 1], SPosY[EraseX, EraseY + 1], tmpTime);
-                                            Debug.Log("MoveP.y" + MoveP.y);
-
-                                            SmallList[Q].SPos = new Vector2(SPosX[EraseX, EraseY + 1], MoveP.y);
-                                            Debug.Log("SPos: " + SmallList[Q].SPos);
-                                            SmallList[Q].SmallB.transform.localPosition = SmallList[Q].SPos;
-                                            SmallList[Q].SmallB.transform.SetParent(Panel.transform, false);
-
-                                            if (MoveP.y != 0)
-                                            {
-                                                CheckP = true;
-                                            }
-
-                                            if (MoveP.y == SPosY[EraseX, EraseY + 1])
-                                            {
-                                                Debug.Log("EraseTest");
-                                                EraseX = -1;
-                                                //EraseY = -1;
-                                                CheckP = false;
-                                                MoveP.y = 0;
-                                                //tmpTime = 0;
-                                            }
-
-                                            break;
+                                            CheckP = true;
                                         }
+
+                                        //動きが止まった場合
+                                        if (MoveP.y == SPosY[EraseX, EraseY + 1])
+                                        {
+                                            Debug.Log("EraseTest");
+                                            EraseX = -1;
+                                            //追いかけてくる処理のために、初期化しない（気になる修正点
+                                            //EraseY = -1;
+                                            CheckP = false;
+                                            MoveP.y = 0;
+                                            //tmpTime = 0;
+                                        }
+
+                                        break;
                                     }
                                 }
                             }
 
-                            else
+                            //消した直後に走る処理
+                            else if (ColorList[EraseX, y] == 0)
                             {
-                                if (ColorList[EraseX, y] == 0)
+                                Debug.Log("EraseSMALL!!");
+
+                                for (int P = 0; P < SmallList.Count; P++)
                                 {
-                                    Debug.Log("EraseSMALL!!");
-
-                                    for (int P = 0; P < SmallList.Count; P++)
+                                    if (SmallList[P].SPos.x == SPosX[EraseX, y - 1] && SmallList[P].SPos.y == SPosY[EraseX, y - 1])
                                     {
-                                        if (SmallList[P].SPos.x == SPosX[EraseX, y - 1] && SmallList[P].SPos.y == SPosY[EraseX, y - 1])
+                                        ColorList[EraseX, y] = ColorList[EraseX, y - 1];
+                                        ColorList[EraseX, y - 1] = 0;
+
+                                        MoveP.y = Mathf.SmoothStep(SPosY[EraseX, y - 1], SPosY[EraseX, y], tmpTime);
+                                        Debug.Log("MoveP.y" + MoveP.y);
+
+                                        SmallList[P].SPos = new Vector2(SPosX[EraseX, y], MoveP.y);
+                                        SmallList[P].SmallB.transform.localPosition = SmallList[P].SPos;
+                                        SmallList[P].SmallB.transform.SetParent(Panel.transform, false);
+
+                                        //動き始めた場合
+                                        if (MoveP.y != 0)
                                         {
-                                            ColorList[EraseX, y] = ColorList[EraseX, y - 1];
-                                            ColorList[EraseX, y - 1] = 0;
-
-                                            MoveP.y = Mathf.SmoothStep(SPosY[EraseX, y - 1], SPosY[EraseX, y], tmpTime);
-                                            Debug.Log("MoveP.y" + MoveP.y);
-
-                                            SmallList[P].SPos = new Vector2(SPosX[EraseX, y], MoveP.y);
-                                            SmallList[P].SmallB.transform.localPosition = SmallList[P].SPos;
-                                            SmallList[P].SmallB.transform.SetParent(Panel.transform, false);
-
-                                            if (MoveP.y != 0)
-                                            {
-                                                CheckP = true;
-                                            }
-
-                                            if (MoveP.y == SPosY[EraseX, y])
-                                            {
-                                                //Debug.Log("ZeroTest");
-                                                EraseX = -1;
-                                                CheckP = false;
-                                                MoveP.y = 0;
-                                                //tmpTime = 0;
-                                            }
-
-                                            break;
+                                            CheckP = true;
                                         }
+
+                                        //動きが止まった場合
+                                        if (MoveP.y == SPosY[EraseX, y])
+                                        {
+                                            //Debug.Log("ZeroTest");
+                                            EraseX = -1;
+                                            CheckP = false;
+                                            MoveP.y = 0;
+                                            //tmpTime = 0;
+                                        }
+
+                                        break;
                                     }
                                 }
                             }
                         }
 
-                        else
+                        else if (EraseY != -1)
                         {
-                            if (EraseY != -1)
+                            //大ブロック消した後を追う処理
+                            if (ColorList[x, EraseY + 1] == 0)
                             {
-                                if (ColorList[x, EraseY + 1] == 0)
+                                Debug.Log("BIG & SMALL!!");
+
+                                for (int JJ = 0; JJ < SmallList.Count; JJ++)
                                 {
-                                    Debug.Log("BIG & SMALL!!");
-
-                                    for (int JJ = 0; JJ < SmallList.Count; JJ++)
+                                    //落下するブロックを決定
+                                    if (SmallList[JJ].SPos.x == SPosX[x, EraseY - 1] && SmallList[JJ].SPos.y == SPosY[x, EraseY - 1])
                                     {
-                                        //落下するブロックを決定
-                                        if (SmallList[JJ].SPos.x == SPosX[x, EraseY - 1] && SmallList[JJ].SPos.y == SPosY[x, EraseY - 1])
+                                        //データ上の移動
+                                        ColorList[x, EraseY + 1] = ColorList[x, EraseY - 1];
+                                        ColorList[x, EraseY - 1] = 0;
+
+                                        Debug.Log("Report2 X:" + SmallList[JJ].SPos.x + " / Y: " + SmallList[JJ].SPos.y);
+                                        Debug.Log("Report3 X:" + SPosX[x, EraseY - 1] + " / Y: " + SPosY[x, EraseY - 1]);
+
+                                        MoveP.y = Mathf.SmoothStep(SPosY[x, EraseY - 1], SPosY[x, EraseY + 1], tmpTime);
+
+                                        Debug.Log("MoveP" + MoveP);
+                                        SmallList[JJ].SPos = new Vector2(SPosX[x, EraseY], MoveP.y);
+                                        SmallList[JJ].SmallB.transform.localPosition = SmallList[JJ].SPos;
+                                        SmallList[JJ].SmallB.transform.SetParent(Panel.transform, false);
+                                        Debug.Log("Report5 X:" + SmallList[JJ].SPos.x + " / Y: " + SmallList[JJ].SPos.y);
+
+                                        //動き始めた場合
+                                        if (MoveP.y != 0)
                                         {
-                                            //データ上の移動
-                                            ColorList[x, EraseY + 1] = ColorList[x, EraseY - 1];
-                                            ColorList[x, EraseY - 1] = 0;
-
-                                            Debug.Log("Report2 X:" + SmallList[JJ].SPos.x + " / Y: " + SmallList[JJ].SPos.y);
-                                            Debug.Log("Report3 X:" + SPosX[x, EraseY - 1] + " / Y: " + SPosY[x, EraseY - 1]);
-
-                                            MoveP.y = Mathf.SmoothStep(SPosY[x, EraseY - 1], SPosY[x, EraseY + 1], tmpTime);
-
-                                            Debug.Log("MoveP" + MoveP);
-                                            SmallList[JJ].SPos = new Vector2(SPosX[x, EraseY], MoveP.y);
-                                            SmallList[JJ].SmallB.transform.localPosition = SmallList[JJ].SPos;
-                                            SmallList[JJ].SmallB.transform.SetParent(Panel.transform, false);
-                                            Debug.Log("Report5 X:" + SmallList[JJ].SPos.x + " / Y: " + SmallList[JJ].SPos.y);
-
-                                            if (MoveP.y != 0)
-                                            {
-                                                CheckP2 = true;
-                                            }
-
-                                            if (MoveP.y == SPosY[x, EraseY + 1])
-                                            {
-                                                Debug.Log("EraseYTest");
-                                                EraseY = -1;
-                                                CheckP2 = false;
-                                                MoveP.y = 0;
-                                                //tmpTime = 0;
-                                            }
-
-                                            break;
+                                            CheckP2 = true;
                                         }
+
+                                        //動きが止まった場合
+                                        if (MoveP.y == SPosY[x, EraseY + 1])
+                                        {
+                                            Debug.Log("EraseYTest");
+                                            EraseY = -1;
+                                            CheckP2 = false;
+                                            MoveP.y = 0;
+                                            //tmpTime = 0;
+                                        }
+
+                                        break;
                                     }
                                 }
                             }
+                        }
 
-                            else
+                        //消した後を追う処理
+                        else if (ColorList[x, y] == 0)
+                        {
+                            Debug.Log("SMALL!!");
+
+                            for (int J = 0; J < SmallList.Count; J++)
                             {
-                                if (ColorList[x, y] == 0)
+                                //落下するブロックを決定
+                                if (SmallList[J].SPos.x == SPosX[x, y - 1] && SmallList[J].SPos.y == SPosY[x, y - 1])
                                 {
-                                    Debug.Log("SMALL!!");
+                                    //データ上の移動
+                                    ColorList[x, y] = ColorList[x, y - 1];
+                                    ColorList[x, y - 1] = 0;
 
-                                    for (int J = 0; J < SmallList.Count; J++)
+                                    Debug.Log("Report2 X:" + SmallList[J].SPos.x + " / Y: " + SmallList[J].SPos.y);
+                                    Debug.Log("Report3 X:" + SPosX[x, y - 1] + " / Y: " + SPosY[x, y - 1]);
+
+                                    MoveP.y = Mathf.SmoothStep(SPosY[x, y - 1], SPosY[x, y], tmpTime);
+
+                                    Debug.Log("MoveP" + MoveP);
+                                    SmallList[J].SPos = new Vector2(SPosX[x, y], MoveP.y);
+                                    SmallList[J].SmallB.transform.localPosition = SmallList[J].SPos;
+                                    SmallList[J].SmallB.transform.SetParent(Panel.transform, false);
+                                    Debug.Log("Report5 X:" + SmallList[J].SPos.x + " / Y: " + SmallList[J].SPos.y);
+                                    
+                                    //動き始めた場合
+                                    if (MoveP.y != 0)
                                     {
-                                        //落下するブロックを決定
-                                        if (SmallList[J].SPos.x == SPosX[x, y - 1] && SmallList[J].SPos.y == SPosY[x, y - 1])
-                                        {
-                                            //データ上の移動
-                                            ColorList[x, y] = ColorList[x, y - 1];
-                                            ColorList[x, y - 1] = 0;
-
-                                            Debug.Log("Report2 X:" + SmallList[J].SPos.x + " / Y: " + SmallList[J].SPos.y);
-                                            Debug.Log("Report3 X:" + SPosX[x, y - 1] + " / Y: " + SPosY[x, y - 1]);
-
-                                            MoveP.y = Mathf.SmoothStep(SPosY[x, y - 1], SPosY[x, y], tmpTime);
-
-                                            Debug.Log("MoveP" + MoveP);
-                                            SmallList[J].SPos = new Vector2(SPosX[x, y], MoveP.y);
-                                            SmallList[J].SmallB.transform.localPosition = SmallList[J].SPos;
-                                            SmallList[J].SmallB.transform.SetParent(Panel.transform, false);
-                                            Debug.Log("Report5 X:" + SmallList[J].SPos.x + " / Y: " + SmallList[J].SPos.y);
-
-                                            if (MoveP.y != 0)
-                                            {
-                                                CheckP2 = true;
-                                            }
-
-                                            if (MoveP.y == SPosY[x, y])
-                                            {
-                                                CheckP2 = false;
-                                                MoveP.y = 0;
-                                                //tmpTime = 0;
-                                            }
-
-                                            break;
-                                        }
+                                        CheckP2 = true;
                                     }
+
+                                    //動きが止まった場合
+                                    if (MoveP.y == SPosY[x, y])
+                                    {
+                                        CheckP2 = false;
+                                        MoveP.y = 0;
+                                        //tmpTime = 0;
+                                    }
+
+                                    break;
                                 }
                             }
                         }
@@ -800,10 +680,13 @@ public class GameSys : MonoBehaviour
 
                         switch (x)
                         {
+                            //左端の処理
                             case 0:
 
+                                //消した直後を走る処理
                                 if (EraseX != -1)
                                 {
+                                    //ずれを正すための処理
                                     if (x != EraseX)
                                     {
                                         break;
@@ -833,11 +716,13 @@ public class GameSys : MonoBehaviour
                                                 BigList[K].BigB.transform.localPosition = BigList[K].BPos;
                                                 BigList[K].BigB.transform.SetParent(Panel.transform, false);
 
+                                                //動き始めた場合
                                                 if (MoveP.y != 0)
                                                 {
                                                     CheckP3 = true;
                                                 }
 
+                                                //動きが止まった場合
                                                 if (MoveP.y == BPosY[EraseX, y - 1])
                                                 {
                                                     EraseX = -1;
@@ -851,67 +736,74 @@ public class GameSys : MonoBehaviour
                                         }
                                     }
 
+                                    //落下できない場合
+                                    //初期化（必要か？
                                     else
                                     {
                                         EraseX = -1;
                                     }
                                 }
 
-                                else
+                                //消した後を追う処理
+                                else if (ColorList[x, y] == 0 && ColorList[x + 1, y] == 0)
                                 {
-                                    if (ColorList[x, y] == 0 && ColorList[x + 1, y] == 0)
+                                    Debug.Log("BIGZero!!");
+
+                                    for (int K = 0; K < BigList.Count; K++)
                                     {
-                                        Debug.Log("BIGZero!!");
-
-                                        for (int K = 0; K < BigList.Count; K++)
+                                        if (BigList[K].BPos.x == BPosX[x, y - 2] && BigList[K].BPos.y == BPosY[x, y - 2])
                                         {
-                                            if (BigList[K].BPos.x == BPosX[x, y - 2] && BigList[K].BPos.y == BPosY[x, y - 2])
+                                            //データ上の色の移動
+                                            ColorList[x, y] = ColorList[x, y - 1];
+                                            ColorList[x + 1, y] = ColorList[x + 1, y - 1];
+
+                                            ColorList[x, y - 2] = 0;
+                                            ColorList[x + 1, y - 2] = 0;
+
+                                            Debug.Log("BigList[K].BPos: " + BigList[K].BPos);
+
+                                            MoveP.y = Mathf.SmoothStep(BPosY[x, y - 2], BPosY[x, y - 1], tmpTime);
+                                            Debug.Log("MoveP: " + MoveP);
+
+                                            BigList[K].BPos = new Vector2(BPosX[x, y - 1], MoveP.y);
+                                            BigList[K].BigB.transform.localPosition = BigList[K].BPos;
+                                            BigList[K].BigB.transform.SetParent(Panel.transform, false);
+                                            
+                                            //動き始めた場合
+                                            if (MoveP.y != 0)
                                             {
-                                                //データ上の色の移動
-                                                ColorList[x, y] = ColorList[x, y - 1];
-                                                ColorList[x + 1, y] = ColorList[x + 1, y - 1];
-
-                                                ColorList[x, y - 2] = 0;
-                                                ColorList[x + 1, y - 2] = 0;
-
-                                                Debug.Log("BigList[K].BPos: " + BigList[K].BPos);
-
-                                                MoveP.y = Mathf.SmoothStep(BPosY[x, y - 2], BPosY[x, y - 1], tmpTime);
-                                                Debug.Log("MoveP: " + MoveP);
-
-                                                BigList[K].BPos = new Vector2(BPosX[x, y - 1], MoveP.y);
-                                                BigList[K].BigB.transform.localPosition = BigList[K].BPos;
-                                                BigList[K].BigB.transform.SetParent(Panel.transform, false);
-
-                                                if (MoveP.y != 0)
-                                                {
-                                                    CheckP4 = true;
-                                                }
-
-                                                if (MoveP.y == BPosY[x, y - 1])
-                                                {
-                                                    CheckP4 = false;
-                                                    MoveP.y = 0;
-                                                    //tmpTime = 0;
-                                                }
-
-                                                break;
+                                                CheckP4 = true;
                                             }
+
+                                            //動きが止まった場合
+                                            if (MoveP.y == BPosY[x, y - 1])
+                                            {
+                                                CheckP4 = false;
+                                                MoveP.y = 0;
+                                                //tmpTime = 0;
+                                            }
+
+                                            break;
                                         }
                                     }
+                                }
 
-                                    else
-                                    {
-                                        EraseX = -1;
-                                    }
+                                //落下できない場合
+                                //初期化（必要か？
+                                else
+                                {
+                                    EraseX = -1;
                                 }
 
                                 break;
 
+                            //右端の処理
                             case 7:
 
+                                //消した直後を走る処理
                                 if (EraseX != -1)
                                 {
+                                    //ずれを正すための処理
                                     if (x != EraseX)
                                     {
                                         break;
@@ -939,11 +831,13 @@ public class GameSys : MonoBehaviour
                                                 BigList[L].BigB.transform.localPosition = BigList[L].BPos;
                                                 BigList[L].BigB.transform.SetParent(Panel.transform, false);
 
+                                                //動き始めた場合
                                                 if (MoveP.y != 0)
                                                 {
                                                     CheckP5 = true;
                                                 }
 
+                                                //動きが止まった場合
                                                 if (MoveP.y == BPosY[EraseX - 1, y - 1])
                                                 {
                                                     EraseX = -1;
@@ -957,70 +851,78 @@ public class GameSys : MonoBehaviour
                                         }
                                     }
 
+                                    //落下できない場合
+                                    //初期化（必要か？
                                     else
                                     {
                                         EraseX = -1;
                                     }
                                 }
 
-                                else
+                                //消した後を追う処理
+                                else if (ColorList[x, y] == 0 && ColorList[x - 1, y] == 0)
                                 {
-                                    if (ColorList[x, y] == 0 && ColorList[x - 1, y] == 0)
+                                    Debug.Log("BIGSeven!!");
+
+                                    for (int L = 0; L < BigList.Count; L++)
                                     {
-                                        Debug.Log("BIGSeven!!");
-
-                                        for (int L = 0; L < BigList.Count; L++)
+                                        if (BigList[L].BPos.x == BPosX[x - 1, y - 2] && BigList[L].BPos.y == BPosY[x - 1, y - 2])
                                         {
-                                            if (BigList[L].BPos.x == BPosX[x - 1, y - 2] && BigList[L].BPos.y == BPosY[x - 1, y - 2])
+                                            //データ上の色の移動
+                                            ColorList[x, y] = ColorList[x, y - 1];
+                                            ColorList[x - 1, y] = ColorList[x - 1, y - 1];
+
+                                            ColorList[x, y - 2] = 0;
+                                            ColorList[x - 1, y - 2] = 0;
+
+                                            MoveP.y = Mathf.SmoothStep(BPosY[x - 1, y - 2], BPosY[x - 1, y - 1], tmpTime);
+                                            Debug.Log("MoveP: " + MoveP);
+
+                                            BigList[L].BPos = new Vector2(BPosX[x - 1, y - 1], MoveP.y);
+                                            BigList[L].BigB.transform.localPosition = BigList[L].BPos;
+                                            BigList[L].BigB.transform.SetParent(Panel.transform, false);
+
+                                            //動き始めた場合
+                                            if (MoveP.y != 0)
                                             {
-                                                //データ上の色の移動
-                                                ColorList[x, y] = ColorList[x, y - 1];
-                                                ColorList[x - 1, y] = ColorList[x - 1, y - 1];
-
-                                                ColorList[x, y - 2] = 0;
-                                                ColorList[x - 1, y - 2] = 0;
-
-                                                MoveP.y = Mathf.SmoothStep(BPosY[x - 1, y - 2], BPosY[x - 1, y - 1], tmpTime);
-                                                Debug.Log("MoveP: " + MoveP);
-
-                                                BigList[L].BPos = new Vector2(BPosX[x - 1, y - 1], MoveP.y);
-                                                BigList[L].BigB.transform.localPosition = BigList[L].BPos;
-                                                BigList[L].BigB.transform.SetParent(Panel.transform, false);
-
-                                                if (MoveP.y != 0)
-                                                {
-                                                    CheckP6 = true;
-                                                }
-
-                                                if (MoveP.y == BPosY[x - 1, y - 1])
-                                                {
-                                                    CheckP6 = false;
-                                                    MoveP.y = 0;
-                                                    //tmpTime = 0;
-                                                }
-
-                                                break;
+                                                CheckP6 = true;
                                             }
+
+                                            //動きが止まった場合
+                                            if (MoveP.y == BPosY[x - 1, y - 1])
+                                            {
+                                                CheckP6 = false;
+                                                MoveP.y = 0;
+                                                //tmpTime = 0;
+                                            }
+
+                                            break;
                                         }
                                     }
+                                }
 
-                                    else
-                                    {
-                                        EraseX = -1;
-                                    }
+                                //落下できない場合
+                                //初期化（必要か？
+                                else
+                                {
+                                    EraseX = -1;
                                 }
 
                                 break;
 
+                            //消したX軸が1～6の処理
                             default:
 
+                                //消した直後に走る処理
                                 if (EraseX != -1)
                                 {
+                                    //ずれを正すための処理
                                     if (x != EraseX)
                                     {
                                         break;
                                     }
 
+                                    //左・右が【空】ブロックであるか？
                                     if (ColorList[x, y] == 0 && ColorList[EraseX - 1, y] == 0 || ColorList[x, y] == 0 && ColorList[EraseX + 1, y] == 0)
                                     {
                                         //右を消して落下した場合
@@ -1052,11 +954,13 @@ public class GameSys : MonoBehaviour
                                                         BigList[M].BigB.transform.localPosition = BigList[M].BPos;
                                                         BigList[M].BigB.transform.SetParent(Panel.transform, false);
 
+                                                        //動き始めた場合
                                                         if (MoveP.y != 0)
                                                         {
                                                             CheckP7 = true;
                                                         }
 
+                                                        //動きが止まった場合
                                                         if (MoveP.y == BPosY[EraseX - 1, y - 1])
                                                         {
                                                             EraseX = -1;
@@ -1107,11 +1011,13 @@ public class GameSys : MonoBehaviour
                                                         BigList[N].BigB.transform.localPosition = BigList[N].BPos;
                                                         BigList[N].BigB.transform.SetParent(Panel.transform, false);
 
+                                                        //動き始めた場合
                                                         if (MoveP.y != 0)
                                                         {
                                                             CheckP8 = true;
                                                         }
 
+                                                        //動きが止まった場合
                                                         if (MoveP.y == BPosY[EraseX, y - 1])
                                                         {
                                                             EraseX = -1;
@@ -1132,6 +1038,7 @@ public class GameSys : MonoBehaviour
                                             }
                                         }
 
+                                        //落下できない場合
                                         else
                                         {
                                             EraseX = -1;
@@ -1145,118 +1052,115 @@ public class GameSys : MonoBehaviour
                                     }
                                 }
 
-                                else
+                                //消した後を追う処理
+                                else if (ColorList[x, y] == 0 && ColorList[x - 1, y] == 0 || ColorList[x, y] == 0 && ColorList[x + 1, y] == 0)
                                 {
-                                    if (ColorList[x, y] == 0 && ColorList[x - 1, y] == 0 || ColorList[x, y] == 0 && ColorList[x + 1, y] == 0)
+                                    //右を消して落下した場合
+                                    if (ColorList[x, y] == 0 && ColorList[x - 1, y] == 0)
                                     {
-                                        //右を消して落下した場合
-                                        if (ColorList[x, y] == 0 && ColorList[x - 1, y] == 0)
+                                        Debug.Log("BIGRight!!");
+                                        Debug.Log("[x, y - 1]: " + ColorList[x, y - 1] + "[x - 1, y - 1]: " + ColorList[x - 1, y - 1] +
+                                                  "[x, y - 2]: " + ColorList[x, y - 2] + "[x - 1, y - 2]: " + ColorList[x - 1, y - 2]);
+
+                                        //4つの色が同じ落下判断処理へ
+                                        if (ColorList[x, y - 1] == ColorList[x - 1, y - 1] &&
+                                            ColorList[x, y - 2] == ColorList[x - 1, y - 2])
                                         {
-                                            Debug.Log("BIGRight!!");
-                                            Debug.Log("[x, y - 1]: " + ColorList[x, y - 1] + "[x - 1, y - 1]: " + ColorList[x - 1, y - 1] +
-                                                      "[x, y - 2]: " + ColorList[x, y - 2] + "[x - 1, y - 2]: " + ColorList[x - 1, y - 2]);
-
-                                            //4つの色が同じ落下判断処理へ
-                                            if (ColorList[x, y - 1] == ColorList[x - 1, y - 1] &&
-                                                ColorList[x, y - 2] == ColorList[x - 1, y - 2])
+                                            for (int M = 0; M < BigList.Count; M++)
                                             {
-                                                for (int M = 0; M < BigList.Count; M++)
+                                                if (BigList[M].BPos.x == BPosX[x - 1, y - 2] && BigList[M].BPos.y == BPosY[x - 1, y - 2])
                                                 {
-                                                    if (BigList[M].BPos.x == BPosX[x - 1, y - 2] && BigList[M].BPos.y == BPosY[x - 1, y - 2])
+                                                    //データ上の色の移動
+                                                    ColorList[x, y] = ColorList[x, y - 1];
+                                                    ColorList[x - 1, y] = ColorList[x - 1, y - 1];
+
+                                                    ColorList[x, y - 2] = 0;
+                                                    ColorList[x - 1, y - 2] = 0;
+
+                                                    MoveP.y = Mathf.SmoothStep(BPosY[x - 1, y - 2], BPosY[x - 1, y - 1], tmpTime);
+                                                    Debug.Log("MoveP: " + MoveP);
+
+                                                    BigList[M].BPos = new Vector2(BPosX[x - 1, y - 1], MoveP.y);
+                                                    BigList[M].BigB.transform.localPosition = BigList[M].BPos;
+                                                    BigList[M].BigB.transform.SetParent(Panel.transform, false);
+
+                                                    //動き始めた場合
+                                                    if (MoveP.y != 0)
                                                     {
-                                                        //データ上の色の移動
-                                                        ColorList[x, y] = ColorList[x, y - 1];
-                                                        ColorList[x - 1, y] = ColorList[x - 1, y - 1];
-
-                                                        ColorList[x, y - 2] = 0;
-                                                        ColorList[x - 1, y - 2] = 0;
-
-                                                        MoveP.y = Mathf.SmoothStep(BPosY[x - 1, y - 2], BPosY[x - 1, y - 1], tmpTime);
-                                                        Debug.Log("MoveP: " + MoveP);
-
-                                                        BigList[M].BPos = new Vector2(BPosX[x - 1, y - 1], MoveP.y);
-                                                        BigList[M].BigB.transform.localPosition = BigList[M].BPos;
-                                                        BigList[M].BigB.transform.SetParent(Panel.transform, false);
-
-                                                        if (MoveP.y != 0)
-                                                        {
-                                                            CheckP9 = true;
-                                                        }
-
-                                                        if (MoveP.y == BPosY[x - 1, y - 1])
-                                                        {
-                                                            CheckP9 = false;
-                                                            MoveP.y = 0;
-                                                            //tmpTime = 0;
-                                                        }
-
-                                                        break;
+                                                        CheckP9 = true;
                                                     }
 
-                                                }
-                                            }
+                                                    //動きが止まった場合
+                                                    if (MoveP.y == BPosY[x - 1, y - 1])
+                                                    {
+                                                        CheckP9 = false;
+                                                        MoveP.y = 0;
+                                                        //tmpTime = 0;
+                                                    }
 
-                                            //落下できない場合
-                                            else
-                                            {
-                                                EraseX = -1;
+                                                    break;
+                                                }
+
                                             }
                                         }
 
-                                        //左を消して落下した場合
-                                        else if (ColorList[x, y] == 0 && ColorList[x + 1, y] == 0)
+                                        //落下できない場合
+                                        else
                                         {
-                                            Debug.Log("BIGLeft!!");
-                                            Debug.Log("[x, y - 1]: " + ColorList[x, y - 1] + "[x + 1, y - 1]: " + ColorList[x + 1, y - 1] +
-                                                      "[x, y - 2]: " + ColorList[x, y - 2] + "[x + 1, y - 2]: " + ColorList[x + 1, y - 2]);
+                                            EraseX = -1;
+                                        }
+                                    }
 
-                                            //4つの色が同じ落下判断処理へ
-                                            if (ColorList[x, y - 1] == ColorList[x + 1, y - 1] &&
-                                                ColorList[x, y - 2] == ColorList[x + 1, y - 2])
+                                    //左を消して落下した場合
+                                    else if (ColorList[x, y] == 0 && ColorList[x + 1, y] == 0)
+                                    {
+                                        Debug.Log("BIGLeft!!");
+                                        Debug.Log("[x, y - 1]: " + ColorList[x, y - 1] + "[x + 1, y - 1]: " + ColorList[x + 1, y - 1] +
+                                                  "[x, y - 2]: " + ColorList[x, y - 2] + "[x + 1, y - 2]: " + ColorList[x + 1, y - 2]);
+
+                                        //4つの色が同じ落下判断処理へ
+                                        if (ColorList[x, y - 1] == ColorList[x + 1, y - 1] &&
+                                            ColorList[x, y - 2] == ColorList[x + 1, y - 2])
+                                        {
+                                            for (int N = 0; N < BigList.Count; N++)
                                             {
-                                                for (int N = 0; N < BigList.Count; N++)
+                                                if (BigList[N].BPos.x == BPosX[x, y - 2] && BigList[N].BPos.y == BPosY[x, y - 2])
                                                 {
-                                                    if (BigList[N].BPos.x == BPosX[x, y - 2] && BigList[N].BPos.y == BPosY[x, y - 2])
+                                                    //データ上の色の移動
+                                                    ColorList[x, y] = ColorList[x, y - 1];
+                                                    ColorList[x + 1, y] = ColorList[x + 1, y - 1];
+
+                                                    ColorList[x, y - 2] = 0;
+                                                    ColorList[x + 1, y - 2] = 0;
+
+                                                    Debug.Log("BigList[N].BPos: " + BigList[N].BPos);
+                                                    MoveP.y = Mathf.SmoothStep(BPosY[x, y - 2], BPosY[x, y - 1], tmpTime);
+                                                    //Debug.Log("MoveXY: " + MoveXY);
+
+                                                    BigList[N].BPos = new Vector2(BPosX[x, y - 1], MoveP.y);
+                                                    BigList[N].BigB.transform.localPosition = BigList[N].BPos;
+                                                    BigList[N].BigB.transform.SetParent(Panel.transform, false);
+
+                                                    //動き始めた場合
+                                                    if (MoveP.y != 0)
                                                     {
-                                                        //データ上の色の移動
-                                                        ColorList[x, y] = ColorList[x, y - 1];
-                                                        ColorList[x + 1, y] = ColorList[x + 1, y - 1];
-
-                                                        ColorList[x, y - 2] = 0;
-                                                        ColorList[x + 1, y - 2] = 0;
-
-                                                        Debug.Log("BigList[N].BPos: " + BigList[N].BPos);
-                                                        MoveP.y = Mathf.SmoothStep(BPosY[x, y - 2], BPosY[x, y - 1], tmpTime);
-                                                        //Debug.Log("MoveXY: " + MoveXY);
-
-                                                        BigList[N].BPos = new Vector2(BPosX[x, y - 1], MoveP.y);
-                                                        BigList[N].BigB.transform.localPosition = BigList[N].BPos;
-                                                        BigList[N].BigB.transform.SetParent(Panel.transform, false);
-
-                                                        if (MoveP.y != 0)
-                                                        {
-                                                            CheckP10 = true;
-                                                        }
-
-                                                        if (MoveP.y == BPosY[x, y - 1])
-                                                        {
-                                                            CheckP10 = false;
-                                                            MoveP.y = 0;
-                                                            //tmpTime = 0;
-                                                        }
-
-                                                        break;
+                                                        CheckP10 = true;
                                                     }
-                                                }
-                                            }
 
-                                            //落下できない場合
-                                            else
-                                            {
-                                                EraseX = -1;
+                                                    //動きが止まった場合
+                                                    if (MoveP.y == BPosY[x, y - 1])
+                                                    {
+                                                        CheckP10 = false;
+                                                        MoveP.y = 0;
+                                                        //tmpTime = 0;
+                                                    }
+
+                                                    break;
+                                                }
                                             }
                                         }
 
+                                        //落下できない場合
                                         else
                                         {
                                             EraseX = -1;
@@ -1268,6 +1172,12 @@ public class GameSys : MonoBehaviour
                                     {
                                         EraseX = -1;
                                     }
+                                }
+
+                                //落下できない場合
+                                else
+                                {
+                                    EraseX = -1;
                                 }
 
                                 break;
